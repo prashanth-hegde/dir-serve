@@ -21,14 +21,14 @@ easy to use and navigate. No external dependency required. The shares is configu
 
 Sample config file:
 
-####Basic config:
+#### Basic config:
 ```toml
 [[shares]]
 name 		= "Docs"
 path 		= "/absolute/path/of/share"
 ```
 
-####Enhanced config:
+#### Enhanced config:
 ```toml
 [[shares]]
 name 			= "Docs"
