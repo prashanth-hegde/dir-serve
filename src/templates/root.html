@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <title>dir-serve</title>
+	<head>
+		<script>
+			let resolveFileLink = (name) => window.location.search = resolveCurrentPath() + '/' + name
+
+			function resolveCurrentPath() {
+				let searchParams = new URLSearchParams(window.location.search)
+				let pathParam = searchParams.get('path')
+				let redirectUrl = "?path=" + pathParam
+				return redirectUrl
+			}
+
+			function formSubmitData() {
+				let redirectPath = document.getElementById('upload_path')
+				if (redirectPath != undefined) {
+					redirectPath.setAttribute('value', resolveCurrentPath())
+				}
+			}
+
+			window.addEventListener('DOMContentLoaded', (event) => {
+				formSubmitData()
+			});
+
+		</script>
+		<meta charset="UTF-8"/>
+		@css 'static/pure3.css'
+	</head>
+  <body>
+    <!-- horizontal menu -->
+    <div class="pure-menu pure-menu-horizontal pure-menu-scrollable">
+    	<ul>
+				@for share in shares
+				<li class="pure-menu-item">
+						<a href="?path=${share}" class="pure-menu-link">${share}</a>
+				</li>
+				@end
+			</ul>
+    </div>
+    <br>
+		<div style="padding-left: 20px;">
+		  @if files.len > 0
+      <table class="pure-table pure-table-horizontal">
+      <thead>
+      <tr>
+          <th>name</th>
+          <th>type</th>
+          <th>size</th>
+      </tr>
+      </thead>
+      <tbody>
+		  @for file in files
+		  <tr>
+				<td> <a href="javascript:resolveFileLink('${file.name}')"> ${file.name} </a> </td>
+				<td> ${file.typ} </td>
+				<td> ${file.siz} </td>
+		  </tr>
+		  @end
+      </tbody>
+      </table>
+		  @end
+
+			@if upload
+			<br/>
+			<form id="upload_form" action="upload" enctype="multipart/form-data" method="post">
+				<input id="upload_file" type="file" name="file">
+				<input id="upload_path" type="hidden" name="path">
+				<br/>
+				<button class="pure-button" type="submit">Upload</button>
+			</form>
+			@end
+		</div>
+  </body>
+</html>
