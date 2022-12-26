@@ -1,9 +1,9 @@
 
 [[shares]]
-name 			= "Movies"
-path 			= "/Users/Z002DCM/dev/misc/dir-serve"
-upload 		= false
-recurse 	= true
+name      = "Movies"
+path      = "/Users/Z002DCM/dev/misc/dir-serve"
+upload    = false
+recurse   = true
 allow_types = "v"
 show_hidden = false
 
