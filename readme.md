@@ -31,12 +31,12 @@ path 		= "/absolute/path/of/share"
 #### Enhanced config:
 ```toml
 [[shares]]
-name 			= "Docs"
-path 			= "/absolute/path/of/share"
-upload 		= false										# makes this a read-only share, optional, default=false
-recurse 	= true										# enables directory traversal within share, optional, default=false
-allow_types = "md,adoc,pdf"					# only exposes specific extensions, comma-separated, optional, default=""
-show_hidden = false									# show hidden files (filenames starting with a dot) optional, default=false
+name      = "Docs"
+path      = "/absolute/path/of/share"
+upload    = false                   # makes this a read-only share, optional, default=false
+recurse   = true                    # enables directory traversal within share, optional, default=false
+allow_types = "md,adoc,pdf"         # only exposes specific extensions, comma-separated, optional, default=""
+show_hidden = false                 # show hidden files (filenames starting with a dot) optional, default=false
 ```
 
 **Note: If you want to expose multiple shares, just replicate the `[[shares]]` section with a different name and
