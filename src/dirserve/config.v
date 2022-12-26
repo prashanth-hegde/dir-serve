@@ -39,8 +39,9 @@ pub fn get_options(serve_opts []ServeOpts, path string) ?ServeOpts {
 		if path == '' {
 			return none
 		}
+		sanitized_path := path.split_nth('/', 2)[0]
     for s in serve_opts {
-        if s.resolve_path(path) != '' {
+        if s.name == sanitized_path {
             return s
         }
     }

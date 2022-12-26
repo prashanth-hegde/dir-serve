@@ -2,8 +2,12 @@
 [[shares]]
 name      = "Movies"
 path      = "/Users/Z002DCM/dev/misc/dir-serve"
-upload    = false
+upload    = true
 recurse   = true
-allow_types = "v"
+allow_types = "v,js,css"
 show_hidden = false
+
+[[shares]]
+name      = "Tmp"
+path      = "/tmp"
 
