@@ -6,13 +6,13 @@ import log { Log }
 
 // mut logger := Log{level: .info}
 pub struct ServeOpts {
-	pub:
-	name    string [required]
-	path    string [required]
-	upload  bool
-	recurse bool
+pub:
+	name        string [required]
+	path        string [required]
+	upload      bool
+	recurse     bool
 	show_hidden bool
-	mut:
+mut:
 	allow_types []string
 	deny_types  []string
 	log         Log = Log{
@@ -36,16 +36,16 @@ pub fn (s ServeOpts) resolve_path(path string) string {
 }
 
 pub fn get_options(serve_opts []ServeOpts, path string) ?ServeOpts {
-		if path == '' {
-			return none
+	if path == '' {
+		return none
+	}
+	sanitized_path := path.split_nth('/', 2)[0]
+	for s in serve_opts {
+		if s.name == sanitized_path {
+			return s
 		}
-		sanitized_path := path.split_nth('/', 2)[0]
-    for s in serve_opts {
-        if s.name == sanitized_path {
-            return s
-        }
-    }
-    return none
+	}
+	return none
 }
 
 pub fn read_config(conf_file string) []ServeOpts {
@@ -72,7 +72,7 @@ pub fn read_config(conf_file string) []ServeOpts {
 				.split(',')
 				.map(it.trim(' '))
 				.filter(it != '')
-				.map('.$it')
+				.map('.${it}')
 			mut deny_types := share.value('deny_types')
 				.default_to('')
 				.string()
