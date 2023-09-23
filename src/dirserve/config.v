@@ -107,7 +107,7 @@ fn read_default_config() ServeOpts {
 	}
 }
 
-fn get_opt(conf_file string, name string) ?ServeOpts {
+fn get_opt(conf_file string, name string) !ServeOpts {
 	opts := read_config(conf_file)
 	if opts.len == 0 {
 		return error('config file not found')

@@ -1,32 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-    <title>dir-serve</title>
-	<head>
-		<style>
-     #dirs {
+<title>dir-serve</title>
+
+<head>
+	<style>
+		#dirs {
 			font-family: Arial, Helvetica, sans-serif;
 			border-collapse: collapse;
 			width: 100%;
-		 }
+		}
 
-     #dirs td, #dirs th {
+		#dirs td,
+		#dirs th {
 			border: 1px solid #ddd;
 			padding: 8px;
-		 }
+		}
 
-     #dirs tr:nth-child(even){background-color: #f2f2f2;}
+		#dirs tr:nth-child(even) {
+			background-color: #f2f2f2;
+		}
 
-     #dirs tr:hover {background-color: #ddd;}
+		#dirs tr:hover {
+			background-color: #dddd;
+		}
 
-     #dirs th {
+		#dirs th {
 			padding-top: 12px;
 			padding-bottom: 12px;
 			text-align: left;
 			background-color: #04AA6D;
 			color: white;
-		 }
+		}
 
-		 ul {
+		ul {
 			font-family: Arial, Helvetica, sans-serif;
 			list-style-type: none;
 			margin: 0;
@@ -56,7 +62,8 @@
 		}
 
 		.button {
-			background-color: #4CAF50; /* Green */
+			background-color: #4CAF50;
+			/* Green */
 			border: none;
 			color: white;
 			padding: 10px 25px;
@@ -65,81 +72,83 @@
 			display: inline-block;
 			font-size: 12px;
 		}
-		</style>
-		<script>
-			let resolveFileLink = (name) => window.location.search = resolveCurrentPath() + '/' + name
+	</style>
+	<script>
+		let resolveFileLink = (name) => window.location.search = resolveCurrentPath() + '/' + name
 
-			function resolveCurrentPath() {
-				let searchParams = new URLSearchParams(window.location.search)
-				let pathParam = searchParams.get('path')
-				let redirectUrl = "?path=" + pathParam
-				return redirectUrl
+		function resolveCurrentPath() {
+			let searchParams = new URLSearchParams(window.location.search)
+			let pathParam = searchParams.get('path')
+			let redirectUrl = "?path=" + pathParam
+			return redirectUrl
+		}
+
+		function formSubmitData() {
+			let redirectPath = document.getElementById('upload_path')
+			if (redirectPath != undefined) {
+				redirectPath.setAttribute('value', resolveCurrentPath())
 			}
+		}
 
-			function formSubmitData() {
-				let redirectPath = document.getElementById('upload_path')
-				if (redirectPath != undefined) {
-					redirectPath.setAttribute('value', resolveCurrentPath())
-				}
+		window.addEventListener('DOMContentLoaded', (event) => {
+			formSubmitData()
+			activateShare()
+		});
+
+		function activateShare() {
+			let searchParams = new URLSearchParams(window.location.search)
+			let pathParam = searchParams.get('path')
+			if (pathParam != undefined) {
+				let shareName = pathParam.split('/')[0]
+				document.getElementById(shareName).setAttribute('class', 'active')
 			}
+		}
+	</script>
+	<meta charset="UTF-8" />
+</head>
 
-			window.addEventListener('DOMContentLoaded', (event) => {
-				formSubmitData()
-				activateShare()
-			});
-
-			function activateShare() {
-				let searchParams = new URLSearchParams(window.location.search)
-				let pathParam = searchParams.get('path')
-				if (pathParam != undefined) {
-					let shareName = pathParam.split('/')[0]
-					document.getElementById(shareName).setAttribute('class', 'active')
-				}
-			}
-		</script>
-		<meta charset="UTF-8"/>
-	</head>
-  <body>
-    <!-- horizontal menu -->
-    <div id="navbar" style="padding-left:20px;padding-right:20px">
-    	<ul>
-				@for share in shares
-				<li> <a id="${share}" href="?path=${share}" onclick="javascript:activateShare('${share}')"> ${share} </a> </li>
-				@end
-			</ul>
-    </div>
-    <br>
-		<div style="padding-left:20px;padding-right:20px">
-		  @if files.len > 0
-      <table id="dirs">
-      <thead>
-      <tr>
-          <th>name</th>
-          <th>type</th>
-          <th>size</th>
-      </tr>
-      </thead>
-      <tbody>
-		  @for file in files
-		  <tr>
-				<td> <a href="javascript:resolveFileLink('${file.name}')"> ${file.name} </a> </td>
-				<td> ${file.typ} </td>
-				<td> ${file.siz} </td>
-		  </tr>
-		  @end
-      </tbody>
-      </table>
-		  @end
-
-			@if upload
-			<br/>
-			<form id="upload_form" action="upload" enctype="multipart/form-data" method="post">
-				<input id="upload_file" type="file" name="file">
-				<input id="upload_path" type="hidden" name="path">
-				<br/>
-				<button class="button" type="submit">Upload</button>
-			</form>
+<body>
+	<!-- horizontal menu -->
+	<div id="navbar" style="padding-left:20px;padding-right:20px">
+		<ul>
+			@for share in shares
+			<li> <a id="${share}" href="?path=${share}" onclick="javascript:activateShare('${share}')"> ${share} </a> </li>
 			@end
-		</div>
-  </body>
+		</ul>
+	</div>
+	<br>
+	<div style="padding-left:20px;padding-right:20px">
+		@if files.len > 0
+		<table id="dirs">
+			<thead>
+				<tr>
+					<th>name</th>
+					<th>type</th>
+					<th>size</th>
+				</tr>
+			</thead>
+			<tbody>
+				@for file in files
+				<tr>
+					<td> <a href="javascript:resolveFileLink('${file.name}')"> ${file.name} </a> </td>
+					<td> ${file.typ} </td>
+					<td> ${file.siz} </td>
+				</tr>
+				@end
+			</tbody>
+		</table>
+		@end
+
+		@if upload
+		<br />
+		<form id="upload_form" action="upload" enctype="multipart/form-data" method="post">
+			<input id="upload_file" type="file" name="file">
+			<input id="upload_path" type="hidden" name="path">
+			<br />
+			<button class="button" type="submit">Upload</button>
+		</form>
+		@end
+	</div>
+</body>
+
 </html>
