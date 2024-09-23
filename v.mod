@@ -1,7 +1,7 @@
 Module {
 	name: 'dirserve'
-	description: 'directory server for any system'
-	version: '0.0.1'
+	description: 'http directory server for any system'
+	version: '0.1.0'
 	license: 'MIT'
 	dependencies: []
 }

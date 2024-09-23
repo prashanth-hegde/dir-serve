@@ -41,6 +41,5 @@ fn test_filter() {
 		filtered := filter(files, test_case)
 		filtered_filenames := filtered.map(it.name)
 		assert filtered_filenames == expected_files[i], test_case.name
-
 	}
 }

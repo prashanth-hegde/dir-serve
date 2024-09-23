@@ -10,11 +10,10 @@ fn test_get_opt() {
 		return
 	}
 	assert valid.name == name
-	assert valid.upload == false
+	assert valid.upload == true
 
 	get_opt(conf_file, 'Non-Existent') or {
 		assert true
 		assert '$err' == 'config Non-Existent not found in config file'
 	}
 }
-

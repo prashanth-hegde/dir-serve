@@ -2,22 +2,18 @@ module dirserve
 
 import toml
 import os
-import log { Log }
 
-// mut logger := Log{level: .info}
+const log := &Log{.info}
 pub struct ServeOpts {
 pub:
-	name        string [required]
-	path        string [required]
+	name        string @[required]
+	path        string @[required]
 	upload      bool
 	recurse     bool
 	show_hidden bool
 mut:
 	allow_types []string
 	deny_types  []string
-	log         Log = Log{
-		level: .info
-	}
 }
 
 pub fn (s ServeOpts) resolve_path(path string) string {
@@ -26,26 +22,27 @@ pub fn (s ServeOpts) resolve_path(path string) string {
 	// then the tokens will be ['Movies', 'test']
 	// The first token will always be the name of the share, and the
 	// rest of it will be relative path to the share
+	if path == '' { return s.path }
 	tokens := path.split_nth('/', 2)
-
 	return if tokens.len > 1 {
-		s.path + '/' + tokens[1]
+		os.join_path(s.path, tokens[1])
 	} else {
 		s.path
 	}
 }
 
-pub fn get_options(serve_opts []ServeOpts, path string) ?ServeOpts {
-	if path == '' {
-		return none
-	}
-	sanitized_path := path.split_nth('/', 2)[0]
-	for s in serve_opts {
-		if s.name == sanitized_path {
-			return s
+pub fn (s []ServeOpts) opt(relative_path string) ServeOpts {
+	base_dir := relative_path.split_nth(os.path_separator, 2)
+	return if relative_path == '' || base_dir.len == 0 {
+		s.first()
+	} else {
+		for o in s {
+			if o.name == base_dir[0] {
+				return o
+			}
 		}
+		s.first()
 	}
-	return none
 }
 
 pub fn read_config(conf_file string) []ServeOpts {
@@ -53,16 +50,15 @@ pub fn read_config(conf_file string) []ServeOpts {
 	conf_file_abs := if conf_file[0] == `/` {
 		conf_file
 	} else {
-		os.getwd() + os.path_separator + conf_file
+		os.join_path(os.getwd(), conf_file)
 	}
 
 	conf := toml.parse_file(conf_file_abs) or {
-		println('unable to read conf file contents, exiting...')
+		eprintln('unable to read conf file contents, exiting...')
 		exit(1)
 	}
 
 	if conf_file == '' {
-		opts << read_default_config()
 		return opts
 	} else {
 		for share in conf.value('shares').array() {
@@ -86,37 +82,16 @@ pub fn read_config(conf_file string) []ServeOpts {
 			}
 
 			opts << ServeOpts{
-				name: share.value('name').string()
-				path: share.value('path').string()
-				upload: share.value('upload').default_to(false).bool()
-				recurse: share.value('recurse').default_to(false).bool()
+				name:        share.value('name').string()
+				path:        share.value('path').string()
+				upload:      share.value('upload').default_to(false).bool()
+				recurse:     share.value('recurse').default_to(false).bool()
 				show_hidden: share.value('show_hidden').default_to(false).bool()
 				allow_types: allow_types
-				deny_types: deny_types
+				deny_types:  deny_types
 			}
 		}
 	}
 
 	return opts
-}
-
-fn read_default_config() ServeOpts {
-	return ServeOpts{
-		name: 'pwd'
-		path: os.getwd()
-	}
-}
-
-fn get_opt(conf_file string, name string) !ServeOpts {
-	opts := read_config(conf_file)
-	if opts.len == 0 {
-		return error('config file not found')
-	}
-
-	for o in opts {
-		if o.name == name {
-			return o
-		}
-	}
-	return error('config ${name} not found in config file')
 }
